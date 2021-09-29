@@ -122,11 +122,20 @@ export function patchSnapshot(patcher: Snapshot, injector = getInjector()) {
 	processAfterReactionsFinished(() => phase = SNAPSHOT_PHASE.DONE);
 }
 
+/**
+ * 获取快照
+ */
 export function getSnapshot(injector?: Injector): Snapshot;
 export function getSnapshot(modelName: string, injector?: Injector): Snapshot;
 export function getSnapshot(arg1: any, arg2?: any) {
-
+        /**
+	 * model 模型名称
+	 */
 	if (typeof arg1 === 'string') {
+		/**
+		 * 深度遍历并获得快照
+		 * args 可以是 injector，如果为空时直接 getInjector 获取注射器然后拿出“水”
+		 */
 		const snapshot = walkAndSerialize((arg2 || getInjector()).dump());
 		return snapshot[arg1];
 	} else {
