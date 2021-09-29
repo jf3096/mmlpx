@@ -39,25 +39,45 @@ function walkAndSerialize(model: any) {
         /**
 	 * 如果对象模型是数组类型，访问其长度可以开启跟踪 （mobx 响应跟踪）
 	 */ 
-	// when model is an array, access the array length to enable tracking
 	if (isArray(model)) {
+		/**
+		 * 进入对象模型便利进行深度解析
+		 */
 		return model.length ? model.map((value: any) => walkAndSerialize(value)) : [];
 	}
 
-	// when model is a map, access the map size to enable tracking
+	/**
+         * 是否是 ES6 Map
+	 */
 	if (isMap(model)) {
+		/**
+		 * 对象长度 > 1
+		 */
 		if (model.size) {
 			const map: any = {};
+			/**
+			 * 遍历模型
+			 */
 			model.forEach((value: any, key: string) => {
+				/**
+				 * 深度遍历
+				 */
 				map[key] = walkAndSerialize(value);
 			});
 			return map;
 		}
+		/**
+		 * 返回普通对象类型 Map => Plain Object
+		 */
 		return {};
 	}
-
+	/**
+	 * 如果是对象类型
+	 */
 	if (isObject(model)) {
-
+		/**
+		 * 遍历对象
+		 */
 		return Object.keys(model).reduce((acc, stateName) => {
 			acc[stateName] = walkAndSerialize(model[stateName]);
 			return acc;
@@ -68,9 +88,10 @@ function walkAndSerialize(model: any) {
 }
 
 /**
+ * 劫持 mobx 全局 state 去执行一个处理器在所有（mobx）响应完成后
  * hijack the mobx global state to run a processor after all reactions finished
  * @see https://github.com/mobxjs/mobx/blob/master/src/core/reaction.ts#L242
- * :dark magic:
+ * :dark magic: （黑魔法）
  * @param {() => void} processor
  */
 function processAfterReactionsFinished(processor: () => void) {
