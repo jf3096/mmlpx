@@ -11,20 +11,34 @@ import { getInjector, setInjector } from '../core/dependency-inject/instantiate'
 import { isArray, isMap, isObject } from '../utils/types';
 import genReactiveInjector from './genReactiveInjector';
 
+/**
+ * 快照阶段
+ */
 enum SNAPSHOT_PHASE {
+	/**
+	 * 打补丁中
+	 */
 	PATCHING,
+	/**
+	 * 完成
+	 */
 	DONE,
 }
 
+/**
+ * 快照阶段：完成 （初始值）
+ */ 
 let phase = SNAPSHOT_PHASE.DONE;
 
 /**
- * serialize and deep walk the models of injector to enable the dependencies tracking
- * @param model
- * @returns {Snapshot} serialization
+ * 序列化并深度便利注射器的对象模型用与开启依赖跟踪
+ * @param model - 对象模型
+ * @returns {Snapshot} serialization - 序列化后的快照
  */
 function walkAndSerialize(model: any) {
-
+        /**
+	 * 如果对象模型是数组类型，访问其长度可以开启跟踪 （mobx 响应跟踪）
+	 */ 
 	// when model is an array, access the array length to enable tracking
 	if (isArray(model)) {
 		return model.length ? model.map((value: any) => walkAndSerialize(value)) : [];
