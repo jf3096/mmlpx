@@ -1,11 +1,11 @@
 /**
- * @author Kuitos
- * @homepage https://github.com/kuitos/
- * @since 2018-08-24 11:10
+ * 是否是严格模式
  */
-
 export let isStrict = false;
 
+/**
+ * 设置严格或非严格模式
+ */
 export default function useStrict(strict: boolean) {
 	const prevStrict = isStrict;
 	isStrict = strict;
